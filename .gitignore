@@ -1,72 +1,75 @@
-# Dependency directories
-node_modules/
-jspm_packages/
+# =========================
+# SpaMo - Clean Research GitIgnore
+# =========================
 
-# Build outputs
-dist/
-build/
-out/
-.next/
-*.tsbuildinfo
-
-# Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Debug logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# -------------------------
+# DATA / ARTIFACTS (MAI su GitHub)
+# -------------------------
+features/
+spamo_runs/
 logs/
-*.log
-
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# IDE - JetBrains
-.idea/
-*.iml
-*.iws
-*.ipr
-
-# IDE - Eclipse
-.classpath
-.project
-.settings/
-
-# Mac OS
-.DS_Store
-
-# Windows
-Thumbs.db
-desktop.ini
-
-# Cache and temp files
-.cache/
-temp/
 tmp/
+**/tmp/
 
-# Project specific files
-# Add any project-specific files or directories you want to ignore
+# Extracted features / checkpoints
+**/*.ckpt
+**/*.npy
+**/*.npz
+**/*.pt
+**/*.pth
+**/*.bin
+**/*.safetensors
 
-*.exe
-*.dll
+# -------------------------
+# BACKUPS (non servono su GitHub)
+# -------------------------
+*.bak_*
+archive_*/
+cleanup_backup_*/
 
-*.tar.gz
-*.zip
+# -------------------------
+# CACHES
+# -------------------------
+__pycache__/
+**/__pycache__/
+.cache/
+**/.cache/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+wandb/
+lightning_logs/
 
-*.tmp
-*.bak
-.hypothesis/
-*.ipynb
+# -------------------------
+# PYTHON BUILD
+# -------------------------
+*.pyc
+*.pyo
+*.pyd
+build/
+dist/
+*.egg-info/
 
-datasets
+# -------------------------
+# ENV / SECRETS
+# -------------------------
+.venv/
+venv/
+.env
+.env.*
+*.env
 
-__pycache__
+# -------------------------
+# OS / IDE
+# -------------------------
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# -------------------------
+# MODEL CACHES
+# -------------------------
+hf_cache/
+models_cache/

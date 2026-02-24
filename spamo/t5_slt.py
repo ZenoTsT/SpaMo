@@ -27,6 +27,16 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 torch.set_float32_matmul_precision('high')
 
 
+
+
+# ----------------------------
+# Small helper to avoid KeyError on optional fields
+# ----------------------------
+def _safe_get(d, k, default=""):
+    try:
+        return d.get(k, default)
+    except Exception:
+        return default
 class FlanT5SLT(AbstractSLT):
     """
     FlanT5-based Sign Language Translation model with multimodal capabilities.
@@ -347,9 +357,9 @@ class FlanT5SLT(AbstractSLT):
                 langs.append(sample['lang'])
                 
                 _ex_lang_trans = [
-                    f"{sample['en_text']}={sample['text']}",
-                    f"{sample['fr_text']}={sample['text']}",
-                    f"{sample['es_text']}={sample['text']}"
+                    f"{sample.get('en_text', sample.get('text', ''))}={sample['text']}",
+                    f"{_safe_get(sample, 'fr_text', '')}={sample['text']}",
+                    f"{_safe_get(sample, 'es_text', '')}={sample['text']}"
                 ]
                 _ex_lang_trans = _ex_lang_trans[:self.num_in_context]
                 ex_lang_translations.append(' '.join(_ex_lang_trans))
@@ -372,9 +382,10 @@ class FlanT5SLT(AbstractSLT):
                     else:
                         glor_values.append(sample['glor_value'])
                         glor_lengths.append(len(sample['glor_value']))
-        
-        ex_lang_translations = derangement(ex_lang_translations)
-        
+        # Apply derangement only when in-context is actually used and we have >=2 samples
+        if self.use_in_context and self.num_in_context > 0 and len(ex_lang_translations) > 1:
+            ex_lang_translations = derangement(ex_lang_translations)
+
         # Return structured dictionary
         return {
             'pixel_values': pixel_values,
