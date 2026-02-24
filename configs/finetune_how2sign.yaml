@@ -59,7 +59,6 @@ data:
         spatiotemporal: true
         spatial_postfix: _s2wrapping
         spatiotemporal_postfix: _overlap-8
-        lang: English
         
     validation:
       target: dataset.how2sign.How2Sign
