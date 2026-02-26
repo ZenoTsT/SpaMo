@@ -87,7 +87,7 @@ class How2Sign(torch.utils.data.Dataset):
         if start is None:
             return sentence_name
 
-        start_str = f"{float(start):.2f}".rstrip("0").rstrip(".")
+        start_str = str(start) 
         return f"{sentence_name}_{start_str}"
 
     def _load_spatial_features(self, file_id: str) -> torch.Tensor:
