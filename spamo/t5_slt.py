@@ -227,6 +227,11 @@ class FlanT5SLT(AbstractSLT):
         # Convert tokens to embeddings
         input_embeds = self.t5_model.encoder.embed_tokens(input_tokens.input_ids)
         
+        # DEBUG scale comparison
+        if split == "train" and batch_idx == 0 and self.global_step % 100 == 0:
+            txt_mean = input_embeds.abs().mean().item()
+            print(f"[DEBUG] text_embed mean={txt_mean:.6f}")
+        
         # Concatenate visual and text embeddings
         joint_outputs = []
         for i in range(bs):
@@ -456,6 +461,14 @@ class FlanT5SLT(AbstractSLT):
         visual_outputs, visual_masks = self.prepare_visual_inputs(inputs)
         visual_outputs = self.fusion_proj(visual_outputs)
         
+        # ---------------- DEBUG VISUAL ACTIVATIONS ----------------
+        if split == "train" and batch_idx == 0 and self.global_step % 100 == 0:
+            with torch.no_grad():
+                vis_mean = visual_outputs.abs().mean().item()
+                vis_std = visual_outputs.std().item()
+                print(f"[DEBUG] visual_outputs mean={vis_mean:.6f} std={vis_std:.6f}")
+        # -----------------------------------------------------------
+        
         # Initialize logging dictionary
         log_dict = {}
         
@@ -566,6 +579,21 @@ class FlanT5SLT(AbstractSLT):
             
             # Add evaluation results to logging
             # log_dict.update(eval_res)
+            
+        # ---------------- DEBUG VISUAL GRADS ----------------
+        if split == "train" and batch_idx == 0 and self.global_step % 100 == 0:
+            def grad_norm(module):
+                total = 0.0
+                for p in module.parameters():
+                    if p.grad is not None:
+                        total += p.grad.detach().abs().mean().item()
+                return total
+
+            print(f"[DEBUG] grad spatio_proj: {grad_norm(self.spatio_proj):.6e}")
+            print(f"[DEBUG] grad spatiotemp_proj: {grad_norm(self.spatiotemp_proj):.6e}")
+            print(f"[DEBUG] grad fusion_proj: {grad_norm(self.fusion_proj):.6e}")
+            print(f"[DEBUG] grad temporal_encoder: {grad_norm(self.temporal_encoder):.6e}")
+# ----------------------------------------------------
 
         return loss, log_dict
 
